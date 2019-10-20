@@ -270,4 +270,4 @@ decide_action [pcap_file]       = (openFile pcap_file ReadMode) >>= loop_until_e
 decide_action _                 = print help_msg
 
 main :: IO ()
-main = getArgs >>= decide_action >> return ()
+main = getArgs >>= decide_action
