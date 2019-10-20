@@ -223,13 +223,13 @@ loop_until_eol packet_action handle = do
 
 process_packet :: PacketAction
 process_packet _ header data_bytes
-  | is_quote_packet = print quote_info >> return []
-  | otherwise       = return []
+  | is_quote_packet = print quote_info >> return [] -- we return [] instead of () to maintain same type interface as the reorder version
+  | otherwise       = return []                     -- so that we can reuse loop_until_eol for both
     where
-        packet_time                = toInteger $ header_seconds  header
+        packet_time                = toInteger $ header_seconds header
         packet_useconds            = toInteger $ header_useconds header
         packet_body                = BS.drop 42 data_bytes -- packet_header includes ethernet, ip, and udp headers
-        (quote_header, quote_body) = BS.splitAt 5 packet_body --extract magic string
+        (quote_header, quote_body) = BS.splitAt 5 packet_body -- extract magic string
         is_quote_packet            = quote_header == quote_magic_string
         quote_info                 = extract_info (packet_time, packet_useconds) quote_body
 
